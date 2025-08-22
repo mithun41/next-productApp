@@ -89,13 +89,6 @@ export default function Navbar() {
             >
               Products
             </Link>
-            <Link
-              href="/about"
-              onClick={() => setIsOpen(false)}
-              className="text-gray-700 hover:text-blue-600 transition"
-            >
-              About
-            </Link>
 
             {/* Dashboard for logged-in users */}
             {session && (
