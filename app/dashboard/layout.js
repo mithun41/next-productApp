@@ -1,7 +1,22 @@
+"use client";
+
 import Link from "next/link";
-import React from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function DashboardLayout({ children }) {
+  const { status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/"); // redirect to login if not logged in
+    }
+  }, [status, router]);
+
+  if (status === "loading") return <p>Loading...</p>;
+
   return (
     <div className="flex">
       {/* Sidebar */}
