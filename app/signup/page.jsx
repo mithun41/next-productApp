@@ -1,6 +1,5 @@
-// File: /app/signup/page.js
-
 "use client";
+
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -8,41 +7,35 @@ import { useRouter } from "next/navigation";
 export default function SignUpPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null); // এরর দেখানোর জন্য স্টেট
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null); // পুরোনো এরর মুছে দিন
+    setError("");
 
     try {
-      // ধাপ ক: প্রথমে আমাদের বানানো সাইন-আপ API-তে রিকোয়েস্ট পাঠান
-      const signupRes = await fetch("/api/auth/signup", {
+      const res = await fetch("/api/auth/signup", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
-      if (!signupRes.ok) {
-        const data = await signupRes.json();
-        throw new Error(data.message || "Something went wrong during sign up!");
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || "Sign up failed.");
       }
 
-      // ধাপ খ: সাইন-আপ সফল হলে, অটোমেটিক লগইন করান
+      // Auto login after signup
       const loginRes = await signIn("credentials", {
         redirect: false,
         email,
         password,
       });
 
-      if (loginRes.error) {
-        throw new Error(loginRes.error);
-      }
+      if (loginRes.error) throw new Error(loginRes.error);
 
-      // ধাপ গ: লগইন সফল হলে, প্রোডাক্ট পেজে রিডাইরেক্ট করুন
-      router.push("/products");
+      router.push("/"); // redirect home
     } catch (err) {
       setError(err.message);
     }
@@ -53,7 +46,6 @@ export default function SignUpPage() {
       <div className="w-full max-w-md rounded-2xl shadow-lg p-8">
         <h1 className="text-3xl font-bold text-center mb-6">Sign Up</h1>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-          {/* ... আপনার input field গুলো অপরিবর্তিত থাকবে ... */}
           <input
             type="email"
             placeholder="Email"
@@ -78,7 +70,7 @@ export default function SignUpPage() {
           </button>
           {error && <p className="text-red-500 text-center mt-2">{error}</p>}
         </form>
-        {/* ... বাকি HTML অপরিবর্তিত থাকবে ... */}
+
         <p className="text-center text-gray-500 mt-4">
           Already have an account?{" "}
           <a href="/login" className="text-blue-600 hover:underline">

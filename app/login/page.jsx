@@ -1,100 +1,80 @@
 "use client";
-import { signIn, useSession } from "next-auth/react";
+
+import { useState } from "react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export default function LoginPage() {
-  const { data: session, status } = useSession();
   const router = useRouter();
-
-  // If user is already logged in, redirect to /products
-  useEffect(() => {
-    if (status === "authenticated") {
-      router.push("/products");
-    }
-  }, [status, router]);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleCredentialsLogin = async (e) => {
     e.preventDefault();
-    const email = e.target.email.value;
-    const password = e.target.password.value;
+    setError("");
 
     const res = await signIn("credentials", {
-      redirect: false,
+      redirect: false, // prevent infinite redirect
       email,
       password,
     });
 
     if (res?.error) {
-      alert(res.error);
+      setError(res.error);
     } else {
-      router.push("/products"); // safe client-side redirect
+      router.push("/"); // redirect after successful login
     }
   };
 
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Loading...</p>
-      </div>
-    );
-  }
+  const handleGoogleLogin = () => {
+    signIn("google", { callbackUrl: "/" }); // redirect home
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center ">
-      <div className="w-full max-w-md rounded-2xl shadow-lg p-8">
-        <h1 className="text-3xl font-bold text-center mb-6">
-          Login to ProductApp
-        </h1>
-        <p className="text-center text-gray-500 mb-8">
-          Access your dashboard and manage products
-        </p>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-md p-6">
+        <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
 
-        {/* Google Sign In */}
-        <button
-          onClick={() => signIn("google", { callbackUrl: "/products" })}
-          className="w-full flex items-center justify-center gap-3 border border-gray-300 py-3 rounded-lg hover:bg-gray-100 transition mb-6"
-        >
-          <img src="/google-icon.svg" alt="Google" className="w-5 h-5" />
-          Sign in with Google
-        </button>
+        {error && (
+          <div className="text-red-500 mb-4 text-center font-medium">
+            {error}
+          </div>
+        )}
 
-        <div className="flex items-center gap-4 mb-6">
-          <hr className="flex-1 border-gray-300" />
-          <span className="text-gray-400 text-sm">or</span>
-          <hr className="flex-1 border-gray-300" />
-        </div>
-
-        {/* Credential Login */}
-        <form className="flex flex-col gap-4" onSubmit={handleCredentialsLogin}>
+        <form onSubmit={handleCredentialsLogin} className="flex flex-col gap-4">
           <input
-            name="email"
             type="email"
             placeholder="Email"
-            className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border p-2 rounded"
             required
           />
           <input
-            name="password"
             type="password"
             placeholder="Password"
-            className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="border p-2 rounded"
             required
           />
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
+            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
           >
             Login
           </button>
         </form>
 
-        <p className="text-center text-gray-500 mt-6 text-sm">
-          Don't have an account?{" "}
-          <a href="/signup" className="text-blue-600 hover:underline">
-            Sign up
-          </a>
-        </p>
+        <div className="text-center my-4">or</div>
+
+        <button
+          onClick={handleGoogleLogin}
+          className="bg-red-500 text-white p-2 rounded w-full hover:bg-red-600"
+        >
+          Sign in with Google
+        </button>
       </div>
     </div>
   );

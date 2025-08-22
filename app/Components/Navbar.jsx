@@ -59,8 +59,8 @@ export default function Navbar() {
               </Link>
             ) : (
               <button
-                onClick={() => signOut()}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                onClick={() => signOut({ callbackUrl: "/" })}
               >
                 Logout
               </button>
@@ -126,7 +126,7 @@ export default function Navbar() {
             ) : (
               <button
                 onClick={() => {
-                  signOut();
+                  signOut({ callbackUrl: "/" }); // redirect to homepage after logout
                   setIsOpen(false);
                 }}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"

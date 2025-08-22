@@ -1,14 +1,13 @@
 // File: /app/api/auth/signup/route.js
 
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/db"; // আপনার ডেটাবেস কানেকশন
+import clientPromise from "@/lib/db";
 import bcrypt from "bcryptjs";
 
 export async function POST(req) {
   try {
     const { email, password } = await req.json();
 
-    // বেসিক ভ্যালিডেশন
     if (!email || !password || password.length < 6) {
       return NextResponse.json(
         {
@@ -20,10 +19,9 @@ export async function POST(req) {
     }
 
     const client = await clientPromise;
-    const db = client.db("productApp"); // আপনার ডেটাবেসের নাম
+    const db = client.db("productApp");
     const usersCollection = db.collection("users");
 
-    // ইউজার আগে থেকেই রেজিস্টার্ড কিনা তা চেক করুন
     const existingUser = await usersCollection.findOne({ email });
     if (existingUser) {
       return NextResponse.json(
@@ -32,10 +30,8 @@ export async function POST(req) {
       );
     }
 
-    // পাসওয়ার্ড হ্যাশ করুন (सुरক্ষার জন্য সবচেয়ে জরুরি)
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // নতুন ইউজারকে ডেটাবেসে ইনসার্ট করুন
     await usersCollection.insertOne({
       email,
       password: hashedPassword,
