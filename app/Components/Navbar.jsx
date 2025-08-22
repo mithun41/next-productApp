@@ -2,11 +2,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import { useSession, signOut } from "next-auth/react";
+// import { useSession, signOut } from "next-auth/react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
 
   return (
     <nav className="w-full shadow bg-white sticky top-0 z-50">
@@ -38,33 +38,30 @@ export default function Navbar() {
             </Link>
 
             {/* Show Dashboard only if logged in */}
-            {session && (
-              <Link
-                href="/dashboard"
-                className="text-gray-700 hover:text-blue-600 transition"
-              >
-                Dashboard
-              </Link>
-            )}
+
+            <Link
+              href="/dashboard"
+              className="text-gray-700 hover:text-blue-600 transition"
+            >
+              Dashboard
+            </Link>
           </div>
 
           {/* Login / Logout Button */}
           <div className="hidden md:flex">
-            {!session ? (
-              <Link
-                href="/login"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-              >
-                Login
-              </Link>
-            ) : (
-              <button
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-                onClick={() => signOut({ callbackUrl: "/" })}
-              >
-                Logout
-              </button>
-            )}
+            <Link
+              href="/login"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            >
+              Login
+            </Link>
+
+            <button
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+              // onClick={() => signOut({ callbackUrl: "/" })}
+            >
+              Logout
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -104,36 +101,34 @@ export default function Navbar() {
             </Link>
 
             {/* Dashboard for logged-in users */}
-            {session && (
-              <Link
-                href="/dashboard"
-                onClick={() => setIsOpen(false)}
-                className="text-gray-700 hover:text-blue-600 transition"
-              >
-                Dashboard
-              </Link>
-            )}
+
+            <Link
+              href="/dashboard"
+              onClick={() => setIsOpen(false)}
+              className="text-gray-700 hover:text-blue-600 transition"
+            >
+              Dashboard
+            </Link>
 
             {/* Login / Logout */}
-            {!session ? (
-              <Link
-                href="/login"
-                onClick={() => setIsOpen(false)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-              >
-                Login
-              </Link>
-            ) : (
-              <button
-                onClick={() => {
-                  signOut({ callbackUrl: "/" }); // redirect to homepage after logout
-                  setIsOpen(false);
-                }}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-              >
-                Logout
-              </button>
-            )}
+
+            <Link
+              href="/login"
+              onClick={() => setIsOpen(false)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            >
+              Login
+            </Link>
+
+            <button
+              onClick={() => {
+                signOut({ callbackUrl: "/" }); // redirect to homepage after logout
+                setIsOpen(false);
+              }}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+            >
+              Logout
+            </button>
           </div>
         </div>
       )}
