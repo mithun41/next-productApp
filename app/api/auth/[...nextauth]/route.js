@@ -39,7 +39,7 @@ export const authOptions = {
     }),
   ],
   pages: {
-    signIn: "/login", // login page
+    signIn: "/login",
   },
   session: { strategy: "jwt" },
   secret: process.env.GOOGLE_CLIENT_SECRET,
