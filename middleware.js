@@ -2,12 +2,10 @@ import { withAuth } from "next-auth/middleware";
 
 export default withAuth({
   pages: {
-    signIn: "/", // login page
+    signIn: "/login", // এখানে তোমার login page route দাও
   },
 });
 
 export const config = {
-  matcher: [
-    "/dashboard/:path*", // protect dashboard and subroutes
-  ],
+  matcher: ["/dashboard/:path*"],
 };

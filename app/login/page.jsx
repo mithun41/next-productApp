@@ -15,7 +15,6 @@ export default function LoginPage() {
     setError("");
 
     const res = await signIn("credentials", {
-      redirect: false, // prevent infinite redirect
       email,
       password,
     });
@@ -23,7 +22,7 @@ export default function LoginPage() {
     if (res?.error) {
       setError(res.error);
     } else {
-      router.push("/products");
+      router.push(callbackUrl || "/products");
     }
   };
 
