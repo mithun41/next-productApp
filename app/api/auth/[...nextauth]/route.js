@@ -1,19 +1,18 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-
-// Temporary in-memory users store
-let users = [];
+import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
+import clientPromise from "@/lib/mongodb";
+import bcrypt from "bcryptjs"; // optional: for password hashing
 
 export const authOptions = {
+  adapter: MongoDBAdapter(clientPromise),
   providers: [
-    // 1️⃣ Google OAuth
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
 
-    // 2️⃣ Credentials login/sign-up
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -21,29 +20,31 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        // Check if user exists
-        let user = users.find(
-          (u) =>
-            u.email === credentials.email && u.password === credentials.password
-        );
+        const db = (await clientPromise).db();
+        const usersCollection = db.collection("users");
 
-        // If user does not exist, create (sign-up)
-        if (!user) {
-          user = {
-            id: Date.now(),
+        let user = await usersCollection.findOne({ email: credentials.email });
+
+        if (user) {
+          // If using hashed password, compare:
+          // const isValid = await bcrypt.compare(credentials.password, user.password);
+          // if (!isValid) return null;
+          return user;
+        } else {
+          // Sign-up new user
+          const newUser = {
             email: credentials.email,
-            password: credentials.password,
+            password: credentials.password, // ideally hash this
           };
-          users.push(user);
+          const result = await usersCollection.insertOne(newUser);
+          newUser.id = result.insertedId;
+          return newUser;
         }
-
-        // Return user object to NextAuth
-        return user;
       },
     }),
   ],
   pages: {
-    signIn: "/login", // Custom login page
+    signIn: "/login",
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
