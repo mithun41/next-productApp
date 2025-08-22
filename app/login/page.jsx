@@ -23,12 +23,12 @@ export default function LoginPage() {
     if (res?.error) {
       setError(res.error);
     } else {
-      router.push("/");
+      router.push("/products");
     }
   };
 
   const handleGoogleLogin = () => {
-    signIn("google", { callbackUrl: "/" });
+    signIn("google", { callbackUrl: "/products" });
   };
 
   return (
