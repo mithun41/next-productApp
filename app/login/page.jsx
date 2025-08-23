@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function LoginPage() {
     setError("");
 
     const res = await signIn("credentials", {
+      redirect: false, // prevent infinite redirect
       email,
       password,
     });
@@ -22,12 +24,12 @@ export default function LoginPage() {
     if (res?.error) {
       setError(res.error);
     } else {
-      router.push(callbackUrl || "/products");
+      router.push("/products"); // redirect after successful login
     }
   };
 
   const handleGoogleLogin = () => {
-    signIn("google", { callbackUrl: "/products" });
+    signIn("google", { callbackUrl: "/" }); // redirect home
   };
 
   return (
@@ -74,6 +76,7 @@ export default function LoginPage() {
         >
           Sign in with Google
         </button>
+        <Link href="/signup">Sign Up</Link>
       </div>
     </div>
   );
