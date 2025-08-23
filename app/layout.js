@@ -1,6 +1,7 @@
 import Navbar from "./Components/Navbar";
 import "./globals.css";
 import Providers from "./Components/Providers";
+import Footer from "./Components/Footer";
 
 export const metadata = {
   title: "Product App",
@@ -17,9 +18,7 @@ export default function RootLayout({ children }) {
             <Navbar />
             <main>{children}</main>
           </Providers>
-          <footer className="py-8 text-sm text-center text-gray-500">
-            © 2025 ProductApp
-          </footer>
+          <Footer />
         </div>
       </body>
     </html>
