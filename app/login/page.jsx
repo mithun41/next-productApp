@@ -29,7 +29,7 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = () => {
-    signIn("google", { callbackUrl: "/" }); // redirect home
+    signIn("google", { callbackUrl: "/products" }); // redirect home
   };
 
   return (
@@ -76,7 +76,12 @@ export default function LoginPage() {
         >
           Sign in with Google
         </button>
-        <Link href="/signup">Sign Up</Link>
+        <p className="text-center text-gray-500 mt-4">
+          Don't have an account?{" "}
+          <a href="/signup" className="text-blue-600 hover:underline">
+            Sign Up
+          </a>
+        </p>
       </div>
     </div>
   );
